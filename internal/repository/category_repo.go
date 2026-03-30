@@ -4,6 +4,7 @@ import (
 	"awesomeProject/internal/models"
 	"database/sql"
 	"fmt"
+
 	"github.com/jmoiron/sqlx"
 )
 
@@ -91,4 +92,16 @@ func (r *CategoryRepository) List(limit, offset int) ([]models.RuleCategory, err
 	}
 
 	return categories, nil
+}
+
+func (r *CategoryRepository) HasRules(categoryID int) (bool, error) {
+	var count int
+	query := `SELECT COUNT(*) FROM rules WHERE category_id = $1`
+
+	err := r.db.Get(&count, query, categoryID)
+	if err != nil {
+		return false, fmt.Errorf("failed to check rules: %w", err)
+	}
+
+	return count > 0, nil
 }

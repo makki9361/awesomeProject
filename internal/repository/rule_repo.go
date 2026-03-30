@@ -74,6 +74,12 @@ func (r *RuleRepository) Update(id int, rule *models.Rule) error {
 		argIndex++
 	}
 
+	if rule.Version != 0 {
+		updates = append(updates, fmt.Sprintf("version = $%d", argIndex))
+		args = append(args, rule.Version)
+		argIndex++
+	}
+
 	if len(updates) == 0 {
 		return nil
 	}
@@ -92,7 +98,6 @@ func (r *RuleRepository) Update(id int, rule *models.Rule) error {
 
 	return nil
 }
-
 func (r *RuleRepository) Delete(id int) error {
 	query := `DELETE FROM rules WHERE id = $1`
 
@@ -111,6 +116,15 @@ func (r *RuleRepository) Delete(id int) error {
 	}
 
 	return nil
+}
+
+type RuleFilter struct {
+	CategoryID *int
+	Status     *string
+	CreatedBy  *int
+	Search     string
+	Limit      int
+	Offset     int
 }
 
 func (r *RuleRepository) List(filter RuleFilter) ([]models.RuleWithCategory, error) {
@@ -142,6 +156,12 @@ func (r *RuleRepository) List(filter RuleFilter) ([]models.RuleWithCategory, err
 		argIndex++
 	}
 
+	if filter.Search != "" {
+		query += fmt.Sprintf(" AND (r.title ILIKE $%d OR r.content ILIKE $%d)", argIndex, argIndex)
+		args = append(args, "%"+filter.Search+"%")
+		argIndex++
+	}
+
 	query += fmt.Sprintf(" ORDER BY r.created_at DESC LIMIT $%d OFFSET $%d", argIndex, argIndex+1)
 	args = append(args, filter.Limit, filter.Offset)
 
@@ -151,12 +171,4 @@ func (r *RuleRepository) List(filter RuleFilter) ([]models.RuleWithCategory, err
 	}
 
 	return rules, nil
-}
-
-type RuleFilter struct {
-	CategoryID *int
-	Status     *string
-	CreatedBy  *int
-	Limit      int
-	Offset     int
 }

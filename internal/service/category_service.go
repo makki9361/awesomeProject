@@ -54,6 +54,23 @@ func (s *CategoryService) UpdateCategory(id int, req *models.UpdateCategoryReque
 }
 
 func (s *CategoryService) DeleteCategory(id int) error {
+	category, err := s.repo.GetByID(id)
+	if err != nil {
+		return err
+	}
+	if category == nil {
+		return fmt.Errorf("category not found")
+	}
+
+	hasRules, err := s.repo.HasRules(id)
+	if err != nil {
+		return err
+	}
+
+	if hasRules {
+		return fmt.Errorf("cannot delete category: it has existing rules. Delete or move the rules first")
+	}
+
 	return s.repo.Delete(id)
 }
 

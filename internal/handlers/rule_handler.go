@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"awesomeProject/internal/middleware"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -113,9 +114,16 @@ func (h *RuleHandler) DeleteRule(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *RuleHandler) ListRules(w http.ResponseWriter, r *http.Request) {
+	user := middleware.GetUserFromContext(r)
+	if user == nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
 	categoryIDStr := r.URL.Query().Get("category_id")
 	status := r.URL.Query().Get("status")
 	createdByStr := r.URL.Query().Get("created_by")
+	search := r.URL.Query().Get("search")
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("page_size"))
 
@@ -135,6 +143,14 @@ func (h *RuleHandler) ListRules(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	var statusPtr *string
+	if user.Role == "employee" {
+		published := "published"
+		statusPtr = &published
+	} else if status != "" {
+		statusPtr = &status
+	}
+
 	if page == 0 {
 		page = 1
 	}
@@ -142,15 +158,11 @@ func (h *RuleHandler) ListRules(w http.ResponseWriter, r *http.Request) {
 		pageSize = 10
 	}
 
-	rules, err := h.service.ListRules(categoryID, &status, createdBy, page, pageSize)
+	rules, err := h.service.ListRules(categoryID, statusPtr, createdBy, search, page, pageSize)
 	if err != nil {
 		h.logger.WithError(err).Error("Failed to list rules")
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
-	}
-
-	if rules == nil {
-		rules = []models.RuleWithCategory{}
 	}
 
 	w.Header().Set("Content-Type", "application/json")

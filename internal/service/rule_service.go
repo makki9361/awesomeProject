@@ -45,10 +45,6 @@ func (s *RuleService) GetRule(id int) (*models.RuleWithCategory, error) {
 }
 
 func (s *RuleService) UpdateRule(id int, req *models.UpdateRuleRequest) error {
-	fmt.Printf("UpdateRule called with id=%d, req=%+v\n", id, req)
-	fmt.Printf("Status is nil? %v, value: %v\n", req.Status == nil, req.Status)
-	fmt.Printf("CategoryID is nil? %v\n", req.CategoryID == nil)
-
 	existingRule, err := s.repo.GetByID(id)
 	if err != nil {
 		return err
@@ -57,32 +53,33 @@ func (s *RuleService) UpdateRule(id int, req *models.UpdateRuleRequest) error {
 		return fmt.Errorf("rule not found")
 	}
 
-	fmt.Printf("Existing rule category_id: %d\n", existingRule.CategoryID)
-
 	updatedRule := &models.Rule{
 		ID:         id,
 		Title:      existingRule.Title,
 		Content:    existingRule.Content,
 		CategoryID: existingRule.CategoryID,
 		Status:     existingRule.Status,
+		Version:    existingRule.Version,
 	}
 
+	versionChanged := false
 	if req.Title != nil {
 		updatedRule.Title = *req.Title
+		versionChanged = true
 	}
 	if req.Content != nil {
 		updatedRule.Content = *req.Content
 	}
 	if req.CategoryID != nil {
-		fmt.Printf("Updating category_id from %d to %d\n", existingRule.CategoryID, *req.CategoryID)
 		updatedRule.CategoryID = *req.CategoryID
 	}
 	if req.Status != nil {
-		fmt.Printf("Updating status from %s to %s\n", existingRule.Status, *req.Status)
 		updatedRule.Status = *req.Status
 	}
 
-	fmt.Printf("Final updatedRule: %+v\n", updatedRule)
+	if versionChanged {
+		updatedRule.Version = existingRule.Version + 1
+	}
 
 	return s.repo.Update(id, updatedRule)
 }
@@ -91,12 +88,15 @@ func (s *RuleService) DeleteRule(id int) error {
 	return s.repo.Delete(id)
 }
 
-func (s *RuleService) ListRules(categoryID *int, status *string, createdBy *int, page, pageSize int) ([]models.RuleWithCategory, error) {
+func (s *RuleService) ListRules(categoryID *int, status *string, createdBy *int, search string, page, pageSize int) ([]models.RuleWithCategory, error) {
 	if page < 1 {
 		page = 1
 	}
 	if pageSize < 1 {
 		pageSize = 10
+	}
+	if pageSize > 100 {
+		pageSize = 100
 	}
 
 	offset := (page - 1) * pageSize
@@ -105,6 +105,7 @@ func (s *RuleService) ListRules(categoryID *int, status *string, createdBy *int,
 		CategoryID: categoryID,
 		Status:     status,
 		CreatedBy:  createdBy,
+		Search:     search,
 		Limit:      pageSize,
 		Offset:     offset,
 	}

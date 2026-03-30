@@ -1,16 +1,19 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
+
 	"awesomeProject/internal/config"
 	"awesomeProject/internal/handlers"
 	"awesomeProject/internal/middleware"
 	"awesomeProject/internal/repository"
 	"awesomeProject/internal/service"
-	"fmt"
-	"net/http"
-
-	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -42,30 +45,33 @@ func main() {
 	ruleHandler := handlers.NewRuleHandler(ruleService, logger)
 
 	router := mux.NewRouter()
-	router.Use(middleware.LoggingMiddleware(logger))
 
-	router.HandleFunc("/users", userHandler.CreateUser).Methods("POST")
-	router.HandleFunc("/users/{id:[0-9]+}", userHandler.GetUser).Methods("GET")
-	router.HandleFunc("/users/{id:[0-9]+}", userHandler.UpdateUser).Methods("PUT")
-	router.HandleFunc("/users/{id:[0-9]+}", userHandler.DeleteUser).Methods("DELETE")
-	router.HandleFunc("/users", userHandler.ListUsers).Methods("GET")
-
-	router.HandleFunc("/categories", categoryHandler.CreateCategory).Methods("POST")
-	router.HandleFunc("/categories/{id:[0-9]+}", categoryHandler.GetCategory).Methods("GET")
-	router.HandleFunc("/categories/{id:[0-9]+}", categoryHandler.UpdateCategory).Methods("PUT")
-	router.HandleFunc("/categories/{id:[0-9]+}", categoryHandler.DeleteCategory).Methods("DELETE")
-	router.HandleFunc("/categories", categoryHandler.ListCategories).Methods("GET")
-
-	router.HandleFunc("/rules", ruleHandler.CreateRule).Methods("POST")
-	router.HandleFunc("/rules/{id:[0-9]+}", ruleHandler.GetRule).Methods("GET")
-	router.HandleFunc("/rules/{id:[0-9]+}", ruleHandler.UpdateRule).Methods("PUT")
-	router.HandleFunc("/rules/{id:[0-9]+}", ruleHandler.DeleteRule).Methods("DELETE")
-	router.HandleFunc("/rules", ruleHandler.ListRules).Methods("GET")
-
+	router.HandleFunc("/login", userHandler.Login).Methods("GET", "POST")
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	}).Methods("GET")
+
+	protected := router.PathPrefix("/api").Subrouter()
+	protected.Use(middleware.AuthMiddleware(userRepo, logger))
+	protected.Use(middleware.LoggingMiddleware(logger))
+
+	protected.HandleFunc("/users", userHandler.ListUsers).Methods("GET")
+	protected.HandleFunc("/users/me", userHandler.GetMe).Methods("GET")
+
+	protected.HandleFunc("/categories", categoryHandler.ListCategories).Methods("GET")
+	protected.HandleFunc("/categories/{id:[0-9]+}", categoryHandler.GetCategory).Methods("GET")
+
+	protected.HandleFunc("/categories", middleware.RequireAdmin(categoryHandler.CreateCategory)).Methods("POST")
+	protected.HandleFunc("/categories/{id:[0-9]+}", middleware.RequireAdmin(categoryHandler.UpdateCategory)).Methods("PUT")
+	protected.HandleFunc("/categories/{id:[0-9]+}", middleware.RequireAdmin(categoryHandler.DeleteCategory)).Methods("DELETE")
+
+	protected.HandleFunc("/rules", ruleHandler.ListRules).Methods("GET")
+	protected.HandleFunc("/rules/{id:[0-9]+}", ruleHandler.GetRule).Methods("GET")
+
+	protected.HandleFunc("/rules", middleware.RequireAdmin(ruleHandler.CreateRule)).Methods("POST")
+	protected.HandleFunc("/rules/{id:[0-9]+}", middleware.RequireAdmin(ruleHandler.UpdateRule)).Methods("PUT")
+	protected.HandleFunc("/rules/{id:[0-9]+}", middleware.RequireAdmin(ruleHandler.DeleteRule)).Methods("DELETE")
 
 	serverAddr := fmt.Sprintf(":%s", cfg.ServerPort)
 	logger.WithField("addr", serverAddr).Info("Starting server")

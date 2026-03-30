@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"awesomeProject/internal/middleware"
 	"awesomeProject/internal/models"
 	"awesomeProject/internal/service"
 	"encoding/json"
@@ -131,4 +132,41 @@ func (h *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
+}
+
+func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
+	users, err := h.service.ListUsers(100, 0)
+	if err != nil {
+		h.logger.WithError(err).Error("Failed to list users")
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	type LoginUser struct {
+		ID   int    `json:"id"`
+		Name string `json:"name"`
+		Role string `json:"role"`
+	}
+
+	result := make([]LoginUser, len(users))
+	for i, user := range users {
+		result[i] = LoginUser{
+			ID:   user.ID,
+			Name: user.Name,
+			Role: user.Role,
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
+}
+
+func (h *UserHandler) GetMe(w http.ResponseWriter, r *http.Request) {
+	user := middleware.GetUserFromContext(r)
+	if user == nil {
+		http.Error(w, "User not found", http.StatusUnauthorized)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
 }
