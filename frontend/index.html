@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему управления правилами</title>
+    <meta name="description" content="Сервис для управления правилами и политиками компании">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="video-background">
+    <video autoplay muted loop id="myVideo">
+        <source src="assets/videos/bg1-big.mp4" type="video/mp4">
+    </video>
+</div>
+<main class="login-container">
+    <section class="login-card">
+        <h1>Вход в систему</h1>
+        <p class="subtitle">Выберите пользователя для входа</p>
+
+        <div id="loading" class="loading-spinner" style="display: none;">Загрузка пользователей...</div>
+        <div id="error" class="error-message" style="display: none;"></div>
+        <div id="users-list" class="users-grid"></div>
+    </section>
+</main>
+
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Правила и политики</title>
+    <meta name="description" content="Просмотр и управление правилами и политиками компании">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<header class="app-header">
+    <div class="header-content">
+        <div class="logo">
+            <h1>Управление правилами</h1>
+        </div>
+        <nav class="nav-links">
+            <a href="rules.html" class="active">Правила</a>
+            <a href="categories.html" id="categories-link" class="admin-only" style="display: none;">Категории</a>
+            <a href="users.html" id="users-link" class="admin-only" style="display: none;">Пользователи</a>
+        </nav>
+        <div class="user-info">
+            <span id="user-name" class="user-name-display"></span>
+            <span id="user-role" class="user-role-badge"></span>
+            <button onclick="logout()" class="logout-btn">Выйти</button>
+        </div>
+    </div>
+</header>
+
+<main class="main-container">
+    <section class="filters-bar">
+        <h2>Фильтры</h2>
+        <div class="filters-grid">
+            <div class="filter-group">
+                <label for="category-filter">Категория</label>
+                <select id="category-filter">
+                    <option value="">Все категории</option>
+                </select>
+            </div>
+            <div class="filter-group admin-only" id="status-filter-group" style="display: none;">
+                <label for="status-filter">Статус</label>
+                <select id="status-filter">
+                    <option value="">Все статусы</option>
+                    <option value="draft">Черновик</option>
+                    <option value="published">Опубликовано</option>
+                </select>
+            </div>
+            <div class="filter-group search-group">
+                <label for="search-input">Поиск</label>
+                <input type="text" id="search-input" placeholder="Поиск по заголовку или содержимому...">
+            </div>
+        </div>
+        <div class="filters-actions">
+            <button onclick="applyFilters()" class="btn btn-primary"> <i class="fas fa-search"></i></button>
+            <button onclick="resetFilters()" class="btn btn-secondary"><i class="fas fa-refresh"></i></button>
+            <button onclick="createRule()" class="btn btn-success admin-only" id="create-rule-btn" style="display: none;">Добавить правило</button>
+        </div>
+    </section>
+
+    <div id="loading" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Загрузка правил...</p>
+    </div>
+    <div id="error" class="error-message" style="display: none;"></div>
+    <div id="rules-grid" class="rules-grid"></div>
+
+    <div class="pagination" id="pagination" style="display: none;">
+        <button id="prev-page" onclick="changePage(-1)">← Предыдущая</button>
+        <span id="page-info">Страница 1</span>
+        <button id="next-page" onclick="changePage(1)">Следующая →</button>
+    </div>
+</main>
+
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/rules.js"></script>
+</body>
+</html>

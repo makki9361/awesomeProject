@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление пользователями</title>
+    <meta name="description" content="Управление пользователями системы">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="app-header">
+    <div class="header-content">
+        <div class="logo">
+            <h1>Управление правилами</h1>
+        </div>
+        <nav class="nav-links">
+            <a href="rules.html">Правила</a>
+            <a href="categories.html">Категории</a>
+            <a href="users.html" class="active">Пользователи</a>
+        </nav>
+        <div class="user-info">
+            <span id="user-name" class="user-name-display"></span>
+            <span id="user-role" class="user-role-badge"></span>
+            <button onclick="logout()" class="logout-btn">Выйти</button>
+        </div>
+    </div>
+</header>
+
+<main class="main-container">
+    <div class="users-header">
+        <h1>Управление пользователями</h1>
+        <button onclick="showCreateUserModal()" class="btn btn-primary">+ Создать пользователя</button>
+    </div>
+
+    <div class="search-bar">
+        <div class="search-by-id">
+            <label for="user-id-search">Поиск пользователя по ID:</label>
+            <div class="search-group">
+                <input type="number" id="user-id-search" placeholder="Введите ID пользователя...">
+                <button onclick="searchUserById()" class="btn btn-primary">Найти</button>
+                <button onclick="resetUserSearch()" class="btn btn-secondary">Сбросить</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading" class="loading-spinner" style="display: none;">Загрузка...</div>
+    <div id="error" class="error-message" style="display: none;"></div>
+
+    <div id="users-list" class="users-list"></div>
+</main>
+
+<div id="user-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">Создание пользователя</h2>
+            <button class="modal-close" onclick="closeUserModal()">&times;</button>
+        </div>
+        <form id="user-form" onsubmit="saveUser(event)">
+            <input type="hidden" id="user-id">
+            <div class="form-group">
+                <label for="user-name">Имя пользователя *</label>
+                <input type="text" id="user-name" required minlength="2" maxlength="100">
+            </div>
+            <div class="form-group">
+                <label for="user-role-select">Роль *</label>
+                <select id="user-role-select" required>
+                    <option value="admin">Администратор</option>
+                    <option value="employee">Сотрудник</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <button type="button" onclick="closeUserModal()" class="btn btn-secondary">Отмена</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/users.js"></script>
+</body>
+</html>

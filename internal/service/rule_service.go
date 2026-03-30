@@ -121,3 +121,24 @@ func (s *RuleService) ListRules(categoryID *int, status *string, createdBy *int,
 
 	return rules, nil
 }
+
+func (s *RuleService) PublishRule(id int, req *models.PublishRuleRequest) error {
+	existingRule, err := s.repo.GetByID(id)
+	if err != nil {
+		return err
+	}
+	if existingRule == nil {
+		return fmt.Errorf("rule not found")
+	}
+
+	updatedRule := &models.Rule{
+		ID:         id,
+		Title:      existingRule.Title,
+		Content:    existingRule.Content,
+		CategoryID: existingRule.CategoryID,
+		Status:     req.Status,
+		Version:    existingRule.Version,
+	}
+
+	return s.repo.Update(id, updatedRule)
+}

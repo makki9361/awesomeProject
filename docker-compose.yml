@@ -32,7 +32,10 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-
+    volumes:
+      - ./frontend:/root/frontend
+      - ./go.mod:/app/go.mod
+      - ./go.sum:/app/go.sum
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
