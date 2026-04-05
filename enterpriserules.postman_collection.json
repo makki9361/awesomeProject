@@ -15,13 +15,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/users",
+              "raw": "http://localhost:8080/api/users",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "users"
               ]
             }
@@ -32,10 +33,17 @@
           "name": "Создать пользователя",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "1",
+                "type": "text",
+                "disabled": true
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\": \"exampleuser3\",\r\n    \"role\": \"employee\"\r\n}",
+              "raw": "{\r\n    \"name\": \"Кирилл 3\",\r\n    \"role\": \"admin\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -43,13 +51,14 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8080/users",
+              "raw": "http://localhost:8080/api/users",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "users"
               ]
             }
@@ -60,15 +69,22 @@
           "name": "Поиск пользователя по ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "1",
+                "type": "text"
+              }
+            ],
             "url": {
-              "raw": "http://localhost:8080/users/1",
+              "raw": "http://localhost:8080/api/users/1",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "users",
                 "1"
               ]
@@ -83,7 +99,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\": \"admin\"\r\n}",
+              "raw": "{\r\n    \"name\": \"kirill\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -91,15 +107,16 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8080/users/1",
+              "raw": "http://localhost:8080/api/users/2",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "users",
-                "1"
+                "2"
               ]
             }
           },
@@ -111,13 +128,14 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/users/9",
+              "raw": "http://localhost:8080/api/users/9",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "users",
                 "9"
               ]
@@ -136,13 +154,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/rules",
+              "raw": "http://localhost:8080/api/rules",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "rules"
               ]
             }
@@ -156,7 +175,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"title\": \"Первое правило компании, никому не говорить о компании\",\r\n    \"content\": \"Второе правило компании, никому не говорить о компании\",\r\n    \"category_id\": 2,\r\n    \"status\": \"draft\",\r\n    \"created_by\": 1\r\n}",
+              "raw": "{\r\n    \"title\": \"Первое правило компании, никому не говорить о компании\",\r\n    \"content\": \"Второе правило компании, никому не говорить о компании\",\r\n    \"category_id\": 1,\r\n    \"status\": \"draft\",\r\n    \"created_by\": 1\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -164,13 +183,14 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8080/rules",
+              "raw": "http://localhost:8080/api/rules",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "rules"
               ]
             }
@@ -183,15 +203,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/rules/7",
+              "raw": "http://localhost:8080/api/rules/1",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "rules",
-                "7"
+                "1"
               ]
             }
           },
@@ -204,7 +225,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"status\": \"published\"\r\n}",
+              "raw": "{\r\n    \"title\": \"Правило\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -212,15 +233,16 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8080/rules/7",
+              "raw": "http://localhost:8080/api/rules/4",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "rules",
-                "7"
+                "4"
               ]
             }
           },
@@ -232,13 +254,14 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/rules/2",
+              "raw": "http://localhost:8080/api/rules/2",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "rules",
                 "2"
               ]
@@ -255,15 +278,22 @@
           "name": "Все категории",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "1",
+                "type": "text"
+              }
+            ],
             "url": {
-              "raw": "http://localhost:8080/categories",
+              "raw": "http://localhost:8080/api/categories",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "categories"
               ]
             }
@@ -285,13 +315,14 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8080/categories",
+              "raw": "http://localhost:8080/api/categories",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "categories"
               ]
             }
@@ -302,17 +333,32 @@
           "name": "Поиск категории по ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "1",
+                "type": "text"
+              }
+            ],
             "url": {
-              "raw": "http://localhost:8080/categories/3",
+              "raw": "http://localhost:8080/api/categories/2",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "categories",
-                "3"
+                "2"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -333,13 +379,14 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8080/categories/1",
+              "raw": "http://localhost:8080/api/categories/1",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "categories",
                 "1"
               ]
@@ -353,15 +400,16 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/categories/3",
+              "raw": "http://localhost:8080/api/categories/1",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "categories",
-                "3"
+                "1"
               ]
             }
           },
